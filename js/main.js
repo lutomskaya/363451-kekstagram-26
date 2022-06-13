@@ -47,19 +47,39 @@ checkStringLength('Какой-то комментарий', 140);
 
 const getRandomArrayElement = (elements) => elements[getRandom(0, elements.length - 1)];
 
+const imageId = [];
+for (let i=1; i<=IMAGE_QUANTITY; i++) {
+  imageId.push(i);
+}
+
+const imageIdComments = [];
+for (let i=1; i<=500; i++) {
+  imageIdComments.push(i);
+}
+
+const getCommentObject = () => {
+  const comments = [];
+
+  for (let i=0; i<=getRandom(1, 6); i++) {
+    comments.push({
+      id: imageIdComments.shift(),
+      avatar: `img/avatar-${  getRandom (AVATARS_MIN, AVATARS_MAX)  }.svg`,
+      message: getRandomArrayElement(COMMENTS),
+      name: getRandomArrayElement(NAMES),
+    });
+  }
+  return comments;
+};
+
 const getImageObject = () => ({
-  id: getRandom (1, 25),
+  id: imageId.shift(),
   url: `photos/${  getRandom (1, 25)  }.jpg`,
   description: getRandomArrayElement(DESCRIPTION),
   likes: getRandom (LIKES_MIN, LIKES_MAX),
-  comments: {
-    id: getRandom (1, 500),
-    avatar: `img/avatar-${  getRandom (AVATARS_MIN, AVATARS_MAX)  }.svg`,
-    message: getRandomArrayElement(COMMENTS),
-    name: getRandomArrayElement(NAMES),
-  },
+  comments: getCommentObject()
 });
 
 const imageDescription = Array.from({length: IMAGE_QUANTITY}, getImageObject);
 
+// eslint-disable-next-line no-console
 console.log(imageDescription);
