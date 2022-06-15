@@ -37,11 +37,6 @@ const LIKES_MAX = 200;
 const AVATARS_MIN = 1;
 const AVATARS_MAX = 6;
 
-const imageId = [];
-for (let i=1; i<=IMAGE_QUANTITY; i++) {
-  imageId.push(i);
-}
-
 const imageIdComments = [];
 for (let i=1; i<=500; i++) {
   imageIdComments.push(i);
@@ -52,7 +47,7 @@ const getCommentObject = () => {
 
   for (let i=0; i<=getRandom(1, 6); i++) {
     comments.push({
-      id: imageIdComments.shift(),
+      id: imageIdComments[i],
       avatar: `img/avatar-${  getRandom (AVATARS_MIN, AVATARS_MAX)  }.svg`,
       message: getRandomArrayElement(COMMENTS),
       name: getRandomArrayElement(NAMES),
@@ -61,14 +56,27 @@ const getCommentObject = () => {
   return comments;
 };
 
-const getImageObject = () => ({
-  id: imageId.shift(),
-  url: `photos/${  getRandom (1, 25)  }.jpg`,
-  description: getRandomArrayElement(DESCRIPTION),
-  likes: getRandom (LIKES_MIN, LIKES_MAX),
-  comments: getCommentObject()
-});
+const imageId = [];
+for (let i=1; i<=IMAGE_QUANTITY; i++) {
+  imageId.push(i);
+}
 
-const imageDescription = Array.from({length: IMAGE_QUANTITY}, getImageObject);
+const getImageObject = (number) => {
+  const photos = [];
+
+  for (let i = 0; i <= number; i++) {
+    photos.push({
+      id: imageId[i],
+      url: `photos/${  getRandom (1, 25)  }.jpg`,
+      description: getRandomArrayElement(DESCRIPTION),
+      likes: getRandom (LIKES_MIN, LIKES_MAX),
+      comments: getCommentObject()
+    });
+  }
+
+  return photos;
+};
+
+const imageDescription = getImageObject(IMAGE_QUANTITY);
 
 export {imageDescription};
