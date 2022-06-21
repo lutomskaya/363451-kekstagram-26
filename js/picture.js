@@ -17,3 +17,5 @@ otherUsers.forEach((photo) => {
 });
 
 pictureList.appendChild(fragment);
+
+export {pictureList};

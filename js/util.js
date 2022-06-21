@@ -11,5 +11,12 @@ checkStringLength('Какой-то комментарий', 140);
 
 const getRandomArrayElement = (elements) => elements[getRandom(0, elements.length - 1)];
 
+const makeElement = (tagName, className) => {
+  const element = document.createElement(tagName);
+  element.classList.add(className);
+  return element;
+};
+
 export {getRandom};
 export {getRandomArrayElement};
+export {makeElement};
