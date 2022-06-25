@@ -15,19 +15,25 @@ const fragment = document.createDocumentFragment();
 const closedPicture = () => {
   bigPicture.classList.add('hidden');
   bodyContainer.classList.remove('modal-open');
+  removeEvent();
 };
 
-const getClosedPictureEsc = (evt) => {
+const onClosedPictureEsc = (evt) => {
   if(evt.keyCode === ESC_KEYCODE) {
     evt.preventDefault();
     closedPicture();
   }
 };
 
-const getClosedPicture = (evt) => {
+const onClosedPicture = (evt) => {
   evt.preventDefault();
   closedPicture();
 };
+
+function removeEvent () {
+  closeButton.removeEventListener('click', onClosedPicture);
+  document.removeEventListener('keydown', onClosedPictureEsc);
+}
 
 const openBigPicture = (photo) => {
   urlPicture.src = photo.url;
@@ -56,8 +62,8 @@ const openBigPicture = (photo) => {
   description.textContent = photo.description;
   bigPicture.classList.remove('hidden');
   bodyContainer.classList.add('modal-open');
-  closeButton.addEventListener('click', getClosedPicture);
-  document.addEventListener('keydown', getClosedPictureEsc);
+  closeButton.addEventListener('click', onClosedPicture);
+  document.addEventListener('keydown', onClosedPictureEsc);
   commentCountElement.classList.add('hidden');
   commentLoader.classList.add('hidden');
 };
