@@ -1,5 +1,4 @@
 import { makeElement } from './util.js';
-const ESC_KEYCODE = 27;
 const bigPicture = document.querySelector('.big-picture');
 const bodyContainer = document.querySelector('body');
 const urlPicture = bigPicture.querySelector('.big-picture__img img');
@@ -19,7 +18,7 @@ const closedPicture = () => {
 };
 
 const onClosedPictureEsc = (evt) => {
-  if(evt.keyCode === ESC_KEYCODE) {
+  if(evt.key === 'Escape') {
     evt.preventDefault();
     closedPicture();
   }
