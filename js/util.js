@@ -17,6 +17,6 @@ const makeElement = (tagName, className) => {
   return element;
 };
 
-export {getRandom};
-export {getRandomArrayElement};
-export {makeElement};
+const isEscapeKey = (evt) => evt.key === 'Escape';
+
+export {getRandom, getRandomArrayElement, makeElement, isEscapeKey};

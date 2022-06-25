@@ -1,4 +1,5 @@
 import { makeElement } from './util.js';
+import { isEscapeKey } from './util.js';
 const bigPicture = document.querySelector('.big-picture');
 const bodyContainer = document.querySelector('body');
 const urlPicture = bigPicture.querySelector('.big-picture__img img');
@@ -11,27 +12,27 @@ const description = document.querySelector('.social__caption');
 const closeButton = bigPicture.querySelector('.big-picture__cancel');
 const fragment = document.createDocumentFragment();
 
-const closedPicture = () => {
+const closeBigPicture = () => {
   bigPicture.classList.add('hidden');
   bodyContainer.classList.remove('modal-open');
   removeEvent();
 };
 
-const onClosedPictureEsc = (evt) => {
-  if(evt.key === 'Escape') {
+const onPictureEscKeydown = (evt) => {
+  if(isEscapeKey(evt)) {
     evt.preventDefault();
-    closedPicture();
+    closeBigPicture();
   }
 };
 
 const onClosedPicture = (evt) => {
   evt.preventDefault();
-  closedPicture();
+  closeBigPicture();
 };
 
 function removeEvent () {
   closeButton.removeEventListener('click', onClosedPicture);
-  document.removeEventListener('keydown', onClosedPictureEsc);
+  document.removeEventListener('keydown', onPictureEscKeydown);
 }
 
 const openBigPicture = (photo) => {
@@ -62,7 +63,7 @@ const openBigPicture = (photo) => {
   bigPicture.classList.remove('hidden');
   bodyContainer.classList.add('modal-open');
   closeButton.addEventListener('click', onClosedPicture);
-  document.addEventListener('keydown', onClosedPictureEsc);
+  document.addEventListener('keydown', onPictureEscKeydown);
   commentCountElement.classList.add('hidden');
   commentLoader.classList.add('hidden');
 };
