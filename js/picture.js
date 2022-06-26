@@ -1,4 +1,5 @@
 import {imageDescription} from './data.js';
+import { openBigPicture } from './big-picture.js';
 
 const pictureTemplate = document.querySelector('#picture')
   .content
@@ -14,6 +15,12 @@ otherUsers.forEach((photo) => {
   pictureElement.querySelector('.picture__comments').textContent = photo.comments.length;
   pictureElement.querySelector('.picture__likes').textContent = photo.likes;
   fragment.appendChild(pictureElement);
+
+  pictureElement.addEventListener('click', () => {
+    openBigPicture(photo);
+  });
 });
 
 pictureList.appendChild(fragment);
+
+export {pictureList};
