@@ -1,16 +1,19 @@
 import { isEscapeKey } from './util.js';
-import { onPopupEscPress } from './form-validation.js';
 
 const uploadFile = document.querySelector('#upload-file');
 const uploadOverlay = document.querySelector('.img-upload__overlay');
 const bodyContainer = document.querySelector('body');
 const uploadClose = document.querySelector('.img-upload__cancel');
 const imgUploadForm = document.querySelector('.img-upload__form');
+const textHashtags = document.querySelector('.text__hashtags');
+const textDescription = document.querySelector('.text__description');
 
 const closeUploadForm = () => {
   uploadOverlay.classList.add('hidden');
   bodyContainer.classList.remove('modal-open');
   imgUploadForm.reset();
+  textHashtags.value = '';
+  textDescription.textContent = '';
   removeEvent();
 };
 
@@ -37,7 +40,6 @@ const openUploadForm = () => {
     bodyContainer.classList.add('modal-open');
     uploadClose.addEventListener('click', onClosedForm);
     document.addEventListener('keydown', onEscKeydown);
-    document.addEventListener('keydown', onPopupEscPress);
   });
 };
 

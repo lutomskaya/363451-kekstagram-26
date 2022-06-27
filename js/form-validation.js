@@ -1,21 +1,22 @@
 import { isEscapeKey } from './util.js';
-import {closeUploadForm} from './form.js';
-const textHashtags = document.querySelector('.text__hashtags');
-const textDescription = document.querySelector('.text__description');
-const imgUploadForm = document.querySelector('.img-upload__form');
-const regularExpression = /^#[A-Za-zА-Яа-яЁё0-9]{1,19}$/;
+import { checkStringLength } from './util.JS';
 
 const MAX_LENGHT_HASHTAG = 20;
 const MAX_HASHTAG_NUMBERS = 5;
 const MAX_LENGTH_DESCRIPTION = 140;
+const REGULAR_EXPRESSION = /^#[A-Za-zА-Яа-яЁё0-9]{1,19}$/;
 
-const getHashtags = (string) => string.split(' ').filter((item) => item !== '');
+const textHashtags = document.querySelector('.text__hashtags');
+const textDescription = document.querySelector('.text__description');
+const imgUploadForm = document.querySelector('.img-upload__form');
 
-const checkHashtagsLength = (value) => value.length <= MAX_LENGHT_HASHTAG;
+const getHashtags = (string) => string.toLowerCase().split(' ').filter((item) => item !== '');
+
+const checkQuantity = (string) => getHashtags(string).length <= MAX_HASHTAG_NUMBERS;
 
 const checkHashtagsSymbols = (value) => {
   const hashtags = getHashtags(value);
-  return hashtags.every((element) => regularExpression.test(element));
+  return hashtags.every((element) => REGULAR_EXPRESSION.test(element));
 };
 
 const getUniqueHashtags = (value) => {
@@ -24,14 +25,10 @@ const getUniqueHashtags = (value) => {
   return hashtags.length === uniqueSet.size;
 };
 
-const checkQuantity = (string) => getHashtags(string).length <= MAX_HASHTAG_NUMBERS;
-
 const getHashtagsToLowerCase = (string) => {
   const hashtags = getHashtags(string);
   return hashtags.map((element) => element.toLowerCase());
 };
-
-const checkCommentsLength = (value) => value.length <= MAX_LENGTH_DESCRIPTION;
 
 const pristine = new Pristine(imgUploadForm, {
   classTo: 'img-upload__field-wrapper',
@@ -39,8 +36,8 @@ const pristine = new Pristine(imgUploadForm, {
   errorTextClass: 'img-upload__error-text',
 });
 
-pristine.addValidator(textDescription, checkCommentsLength, `Не более ${MAX_LENGTH_DESCRIPTION} символов`);
-pristine.addValidator(textHashtags, checkHashtagsLength, `Не более ${MAX_LENGHT_HASHTAG} символов`);
+pristine.addValidator(checkStringLength(textDescription, MAX_LENGTH_DESCRIPTION), `Не более ${MAX_LENGTH_DESCRIPTION} символов`);
+pristine.addValidator(checkStringLength(textHashtags, MAX_LENGHT_HASHTAG), `Не более ${MAX_LENGHT_HASHTAG} символов`);
 pristine.addValidator(textHashtags, checkHashtagsSymbols, 'хэш-тег начинается с символа # (решётка), строка после решётки должна состоять из букв и чисел и не может содержать пробелы, спецсимволы (#, @, $ и т. п.), символы пунктуации (тире, дефис, запятая и т. п.), эмодзи и т. д.');
 pristine.addValidator(textHashtags, getUniqueHashtags, 'один и тот же хэш-тег не может быть использован дважды');
 pristine.addValidator(textHashtags, checkQuantity, 'нельзя указать больше пяти хэш-тегов');
@@ -53,10 +50,11 @@ imgUploadForm.addEventListener('submit', (evt) => {
   }
 });
 
-function onPopupEscPress(evt) {
-  if (textDescription !== document.activeElement && textHashtags !== document.activeElement) {
-    isEscapeKey(evt, closeUploadForm);
+const stopPropagationEsc = (evt) => {
+  if (isEscapeKey(evt)) {
+    evt.stopPropagation();
   }
-}
+};
 
-export {onPopupEscPress};
+textHashtags.addEventListener('keydown', stopPropagationEsc);
+textDescription.addEventListener('keydown', stopPropagationEsc);
