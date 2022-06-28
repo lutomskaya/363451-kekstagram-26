@@ -1,4 +1,3 @@
-import { isEscapeKey } from './util.js';
 import { checkStringLength } from './util.JS';
 
 const MAX_LENGHT_HASHTAG = 20;
@@ -50,11 +49,4 @@ imgUploadForm.addEventListener('submit', (evt) => {
   }
 });
 
-const stopPropagationEsc = (evt) => {
-  if (isEscapeKey(evt)) {
-    evt.stopPropagation();
-  }
-};
-
-textHashtags.addEventListener('keydown', stopPropagationEsc);
-textDescription.addEventListener('keydown', stopPropagationEsc);
+export {pristine};
