@@ -58,10 +58,7 @@ const renderComments = (comments) => {
   commentCountElement.classList.remove('hidden');
   commentLoader.classList.remove('hidden');
 
-  commentLoader.addEventListener('click', onLoaderClick);
-  renderCommentsStep();
-
-  function renderCommentsStep () {
+  const renderCommentsStep = () => {
     const lastIndex = Math.min(currentIndex + COMMENT_COUNT, comments.length);
     for (let i = currentIndex; i < lastIndex; i++) {
       commentList.appendChild(renderComment(comments[i]));
@@ -74,7 +71,10 @@ const renderComments = (comments) => {
       commentLoader.classList.add('hidden');
       commentLoader.removeEventListener('click', onLoaderClick);
     }
-  }
+  };
+
+  commentLoader.addEventListener('click', onLoaderClick);
+  renderCommentsStep();
 
   function onLoaderClick (evt) {
     evt.preventDefault();
