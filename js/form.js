@@ -1,7 +1,7 @@
 import { isEscapeKey } from './util.js';
 import { pristine } from './form-validation.js';
 import { scaleInput, imgUploadPreview, scaleUpButton, scaleDownButton, onScaleImgIn, onScaleImgOut } from './zoom.js';
-import { changeEffects, getEffectStyle, uiSlider } from './effect.js';
+import { changeEffects, getEffectStyle, } from './effect.js';
 
 const DEFAULT_FILTER_VALUE = 100;
 const uploadFile = document.querySelector('#upload-file');
@@ -12,6 +12,7 @@ const uploadClose = document.querySelector('.img-upload__cancel');
 const imgUploadForm = document.querySelector('.img-upload__form');
 const textHashtags = document.querySelector('.text__hashtags');
 const textDescription = document.querySelector('.text__description');
+const slider = document.querySelector('.effect-level__slider');
 
 const stopPropagationEsc = (evt) => {
   if (isEscapeKey(evt)) {
@@ -28,6 +29,8 @@ const closeUploadForm = () => {
   imgUploadForm.reset();
   pristine.reset();
   removeEvent();
+  imgEffectsFieldset.removeEventListener('change', changeEffects);
+  slider.noUiSlider.destroy();
 };
 
 const onEscKeydown = (evt) => {
@@ -62,8 +65,27 @@ const openUploadForm = () => {
     document.addEventListener('keydown', onEscKeydown);
     textHashtags.addEventListener('keydown', stopPropagationEsc);
     textDescription.addEventListener('keydown', stopPropagationEsc);
-    uiSlider.on('update', changeEffects);
-    imgEffectsFieldset.addEventListener('change', getEffectStyle);
+
+    const uiSlider = noUiSlider.create(slider, {
+      range: {min: 0, max: 1,},
+      start: 1,
+      step: 0.1,
+      connect: 'lower',
+      format: {
+        to: function (value) {
+          if (Number.isInteger(value)) {
+            return value.toFixed(0);
+          }
+          return value.toFixed(1);
+        },
+        from: function (value) {
+          return parseFloat(value);
+        },
+      },
+    });
+
+    uiSlider.on('update', getEffectStyle);
+    imgEffectsFieldset.addEventListener('change', changeEffects);
   });
 };
 
