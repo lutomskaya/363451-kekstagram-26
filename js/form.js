@@ -64,4 +64,4 @@ const openUploadForm = () => {
   });
 };
 
-export {openUploadForm, closeUploadForm, imgEffectsFieldset};
+export {openUploadForm, closeUploadForm, imgEffectsFieldset, bodyContainer};

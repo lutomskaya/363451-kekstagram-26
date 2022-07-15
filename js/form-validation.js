@@ -1,4 +1,6 @@
 import { checkStringLength } from './util.JS';
+import { sendData } from './api';
+import { closeUploadForm } from './form';
 
 const MAX_LENGHT_HASHTAG = 20;
 const MAX_HASHTAG_NUMBERS = 5;
@@ -8,6 +10,7 @@ const REGULAR_EXPRESSION = /^#[A-Za-zА-Яа-яЁё0-9]{1,19}$/;
 const textHashtags = document.querySelector('.text__hashtags');
 const textDescription = document.querySelector('.text__description');
 const imgUploadForm = document.querySelector('.img-upload__form');
+const submitButton = document.querySelector('.setup-submit');
 
 const getHashtags = (string) => string.toLowerCase().split(' ').filter((item) => item !== '');
 
@@ -29,11 +32,23 @@ const getHashtagsToLowerCase = (string) => {
   return hashtags.map((element) => element.toLowerCase());
 };
 
+const blockSubmitButton = () => {
+  submitButton.disabled = true;
+  submitButton.textContent = 'Публикую...';
+};
+
+const unblockSubmitButton = () => {
+  submitButton.disabled = false;
+  submitButton.textContent = 'Опубликовать';
+};
+
 const pristine = new Pristine(imgUploadForm, {
   classTo: 'img-upload__field-wrapper',
   errorTextParent: 'img-upload__field-wrapper',
   errorTextClass: 'img-upload__error-text',
 });
+
+const isValidHashtags = () => textHashtags.value.length === 0;
 
 pristine.addValidator(checkStringLength(textDescription, MAX_LENGTH_DESCRIPTION), `Не более ${MAX_LENGTH_DESCRIPTION} символов`);
 pristine.addValidator(checkStringLength(textHashtags, MAX_LENGHT_HASHTAG), `Не более ${MAX_LENGHT_HASHTAG} символов`);
@@ -42,11 +57,33 @@ pristine.addValidator(textHashtags, getUniqueHashtags, 'один и тот же 
 pristine.addValidator(textHashtags, checkQuantity, 'нельзя указать больше пяти хэш-тегов');
 pristine.addValidator(textHashtags, getHashtagsToLowerCase, '');
 
-imgUploadForm.addEventListener('submit', (evt) => {
+/* imgUploadForm.addEventListener('submit', (evt) => {
   evt.preventDefault();
   if (pristine.validate()) {
     imgUploadForm.submit();
   }
-});
+}); */
 
-export {pristine};
+const submitForm = (onSuccess) => {
+  imgUploadForm.addEventListener('submit', (evt) => {
+    evt.preventDefault();
+    const isValid = pristine.validate();
+    if (isValid || isValidHashtags()) {
+      blockSubmitButton();
+      sendData(
+        () => {
+          onSuccess();
+          unblockSubmitButton();
+          closeUploadForm();
+        },
+        () => {
+          unblockSubmitButton();
+          closeUploadForm();
+        },
+        new FormData(evt.target),
+      );
+    }
+  });
+};
+
+export {pristine, submitForm};
