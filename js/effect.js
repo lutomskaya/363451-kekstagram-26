@@ -56,6 +56,7 @@ const effectSliderContainer = document.querySelector('.img-upload__effect-level'
 const effectInputValue = document.querySelector('.effect-level__value');
 const imageUploadForm = document.querySelector('#upload-select-image');
 const imgUploadPreview = document.querySelector('.img-upload__preview img');
+const imgEffectsFieldset = document.querySelector('.img-upload__effects');
 const slider = document.querySelector('.effect-level__slider');
 
 
@@ -83,6 +84,7 @@ const getEffectStyle = (handlersValue) => {
   const value = handlersValue[0];
   const effectName = imageUploadForm.effect.value;
   if (effectName === NO_EFFECT) {
+    effectSliderContainer.classList.add('hidden');
     return;
   }
   const filterName = EFFECTS[effectName].style;
@@ -91,4 +93,32 @@ const getEffectStyle = (handlersValue) => {
   effectInputValue.value = value;
 };
 
-export { changeEffects, getEffectStyle };
+const setupEffects = () => {
+  const uiSlider = noUiSlider.create(slider, {
+    range: {min: 0, max: 1,},
+    start: 1,
+    step: 0.1,
+    connect: 'lower',
+    format: {
+      to: function (value) {
+        if (Number.isInteger(value)) {
+          return value.toFixed(0);
+        }
+        return value.toFixed(1);
+      },
+      from: function (value) {
+        return parseFloat(value);
+      },
+    },
+  });
+
+  uiSlider.on('update', getEffectStyle);
+  imgEffectsFieldset.addEventListener('change', changeEffects);
+};
+
+const destroyEffects = () => {
+  imgEffectsFieldset.removeEventListener('change', changeEffects);
+  slider.noUiSlider.destroy();
+};
+
+export { destroyEffects, setupEffects };

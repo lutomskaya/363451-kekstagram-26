@@ -1,48 +1,41 @@
 const SIZE_MIN = 25;
 const SIZE_MAX = 100;
 const SIZE_STEP = 25;
-let currentIndex;
-let currentScaleValue = SIZE_MAX;
+const DEFAULT_FILTER_VALUE = 100;
 
 const scaleUpButton = document.querySelector('.scale__control--bigger');
 const scaleDownButton = document.querySelector('.scale__control--smaller');
 const scaleInput = document.querySelector('.scale__control--value');
 const imgUploadPreview = document.querySelector('.img-upload__preview img');
 
-const setImagePreviewScale = (value) => {
-  imgUploadPreview.style.transform = `scale(${  value / 100  })`;
-  currentIndex = `${value  }%`;
-  scaleInput.setAttribute('value', currentIndex);
-};
-
 const reduceZoom = () => {
-  currentScaleValue -= SIZE_STEP;
-  setImagePreviewScale(currentScaleValue);
+  let scale = parseInt(scaleInput.value, 10);
+  if (scale > SIZE_MIN) {
+    scale -= SIZE_STEP;
+    scaleInput.value = `${scale}%`;
+    imgUploadPreview.style = `transform: scale(${scale / 100})`;
+  }
 };
 
 const increaseZoom = () => {
-  currentScaleValue += SIZE_STEP;
-  setImagePreviewScale(currentScaleValue);
-};
-
-const onScaleImgOut = () => {
-  if (currentScaleValue > SIZE_MIN) {
-    reduceZoom();
+  let scale = parseInt(scaleInput.value, 10);
+  if (scale < SIZE_MAX) {
+    scale += SIZE_STEP;
+    scaleInput.value = `${scale}%`;
+    imgUploadPreview.style = `transform: scale(${scale / 100})`;
   }
 };
 
-const onScaleImgIn = () => {
-  if (currentScaleValue < SIZE_MAX) {
-    increaseZoom();
-  }
+const setupZoom = () => {
+  scaleInput.value = `${DEFAULT_FILTER_VALUE}%`;
+  scaleDownButton.addEventListener('click', reduceZoom);
+  scaleUpButton.addEventListener('click', increaseZoom);
 };
 
-scaleDownButton.addEventListener('click', onScaleImgOut);
+const destroyZoom = () => {
+  scaleInput.value = `${DEFAULT_FILTER_VALUE}%`;
+  scaleDownButton.removeEventListener('click', reduceZoom);
+  scaleUpButton.removeEventListener('click', increaseZoom);
+};
 
-scaleDownButton.addEventListener('keydown', onScaleImgOut);
-
-scaleUpButton.addEventListener('click', onScaleImgIn);
-
-scaleUpButton.addEventListener('keydown', onScaleImgIn);
-
-export {scaleInput, imgUploadPreview, scaleDownButton, scaleUpButton, onScaleImgIn, onScaleImgOut};
+export { setupZoom, destroyZoom };
