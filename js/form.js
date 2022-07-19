@@ -1,5 +1,5 @@
 import { isEscapeKey } from './util.js';
-import { pristine } from './form-validation.js';
+import { pristine, onSubmitForm } from './form-validation.js';
 import { setupZoom, destroyZoom } from './zoom.js';
 import { setupEffects, destroyEffects } from './effect.js';
 
@@ -49,6 +49,7 @@ function removeEvent () {
   document.removeEventListener('keydown', onEscKeydown);
   textHashtags.removeEventListener('keydown', stopPropagationEsc);
   textDescription.removeEventListener('keydown', stopPropagationEsc);
+  imgUploadForm.removeEventListener('submit', onSubmitForm);
 }
 
 const openUploadForm = () => {
@@ -58,6 +59,7 @@ const openUploadForm = () => {
   document.addEventListener('keydown', onEscKeydown);
   textHashtags.addEventListener('keydown', stopPropagationEsc);
   textDescription.addEventListener('keydown', stopPropagationEsc);
+  imgUploadForm.addEventListener('submit', onSubmitForm);
   setupZoom();
   setupEffects();
 };

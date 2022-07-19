@@ -1,5 +1,5 @@
 import { checkStringLength } from './util.JS';
-import { openErrorMessage, openSuccessMessage } from './messages.js';
+import { openMessage } from './messages.js';
 import { sendData } from './api.js';
 
 const MAX_LENGHT_HASHTAG = 20;
@@ -56,27 +56,24 @@ const unblockSubmitButton = () => {
 };
 
 
-const submitForm = (onSuccess) => {
-  imgUploadForm.addEventListener('submit', (evt) => {
-    evt.preventDefault();
-    const isValid = pristine.validate();
-    if (isValid) {
-      blockSubmitButton();
-      sendData(
-        () => {
-          onSuccess();
-          unblockSubmitButton();
-          openSuccessMessage();
-        },
-        () => {
-          openErrorMessage();
-          unblockSubmitButton();
-        },
-        new FormData(evt.target),
-      );
-    }
-  });
+const onSubmitForm = (evt) => {
+  evt.preventDefault();
+  const isValid = pristine.validate();
+  if (isValid) {
+    blockSubmitButton();
+    sendData(
+      () => {
+        unblockSubmitButton();
+        openMessage('success');
+      },
+      () => {
+        unblockSubmitButton();
+        openMessage('error');
+      },
+      new FormData(imgUploadForm),
+    );
+  }
 };
 
-export {pristine, submitForm, textHashtags, textDescription};
+export {pristine, onSubmitForm, textHashtags, textDescription};
 

@@ -1,8 +1,8 @@
-import { openErrorMessage, showAlertMessage } from './messages.js';
+import { showAlertMessage } from './messages.js';
 
 const getData = (onSuccess) => {
   fetch('https://26.javascript.pages.academy/kekstagram/data')
-    .then((responce) => responce.json())
+    .then((response) => response.json())
     .then((photos) => {
       onSuccess(photos);
     })
@@ -19,15 +19,15 @@ const sendData = (onSuccess, onFail, body) => {
       body,
     },
   )
-    .then((responce) => {
-      if (responce.ok) {
+    .then((response) => {
+      if (response.ok) {
         onSuccess();
       } else {
-        onFail();
+        onFail('Не удалось отправить форму. Попробуйте ещё раз');
       }
     })
     .catch(() => {
-      openErrorMessage();
+      onFail('Не удалось отправить форму. Попробуйте ещё раз');
     });
 };
 
