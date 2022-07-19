@@ -1,13 +1,13 @@
-import { showAlertMessage } from './messages';
+import { openErrorMessage, showAlertMessage } from './messages.js';
 
 const getData = (onSuccess) => {
   fetch('https://26.javascript.pages.academy/kekstagram/data')
-    .then((response) => response.json())
-    .then((pictures) => {
-      onSuccess(pictures);
+    .then((responce) => responce.json())
+    .then((photos) => {
+      onSuccess(photos);
     })
     .catch(() => {
-      showAlertMessage('Не удалось загрузить изображения с сервера');
+      showAlertMessage('При загрузке данных с сервера произошла ошибка.');
     });
 };
 
@@ -19,16 +19,16 @@ const sendData = (onSuccess, onFail, body) => {
       body,
     },
   )
-    .then((response) => {
-      if (response.ok) {
-        onSuccess(true);
+    .then((responce) => {
+      if (responce.ok) {
+        onSuccess();
       } else {
-        onFail('Не удалось отправить форму. Попробуйте ещё раз');
+        onFail();
       }
     })
     .catch(() => {
-      onFail('Не удалось отправить форму. Попробуйте ещё раз');
+      openErrorMessage();
     });
 };
 
-export {getData, sendData};
+export { getData, sendData };

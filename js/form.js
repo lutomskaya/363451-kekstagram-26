@@ -52,16 +52,16 @@ function removeEvent () {
 }
 
 const openUploadForm = () => {
-  uploadFile.addEventListener('change', () => {
-    uploadOverlay.classList.remove('hidden');
-    bodyContainer.classList.add('modal-open');
-    uploadClose.addEventListener('click', onClosedForm);
-    document.addEventListener('keydown', onEscKeydown);
-    textHashtags.addEventListener('keydown', stopPropagationEsc);
-    textDescription.addEventListener('keydown', stopPropagationEsc);
-    setupZoom();
-    setupEffects();
-  });
+  uploadOverlay.classList.remove('hidden');
+  bodyContainer.classList.add('modal-open');
+  uploadClose.addEventListener('click', onClosedForm);
+  document.addEventListener('keydown', onEscKeydown);
+  textHashtags.addEventListener('keydown', stopPropagationEsc);
+  textDescription.addEventListener('keydown', stopPropagationEsc);
+  setupZoom();
+  setupEffects();
 };
+
+uploadFile.addEventListener('change', openUploadForm);
 
 export {openUploadForm, closeUploadForm, imgEffectsFieldset, bodyContainer};

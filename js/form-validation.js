@@ -1,6 +1,6 @@
 import { checkStringLength } from './util.JS';
-import { sendData } from './api';
-import { closeUploadForm } from './form';
+import { openErrorMessage, openSuccessMessage } from './messages.js';
+import { sendData } from './api.js';
 
 const MAX_LENGHT_HASHTAG = 20;
 const MAX_HASHTAG_NUMBERS = 5;
@@ -10,7 +10,7 @@ const REGULAR_EXPRESSION = /^#[A-Za-zА-Яа-яЁё0-9]{1,19}$/;
 const textHashtags = document.querySelector('.text__hashtags');
 const textDescription = document.querySelector('.text__description');
 const imgUploadForm = document.querySelector('.img-upload__form');
-const submitButton = document.querySelector('.setup-submit');
+const submitButton = document.querySelector('#upload-submit');
 
 const getHashtags = (string) => string.toLowerCase().split(' ').filter((item) => item !== '');
 
@@ -32,6 +32,19 @@ const getHashtagsToLowerCase = (string) => {
   return hashtags.map((element) => element.toLowerCase());
 };
 
+const pristine = new Pristine(imgUploadForm, {
+  classTo: 'img-upload__field-wrapper',
+  errorTextParent: 'img-upload__field-wrapper',
+  errorTextClass: 'img-upload__error-text',
+});
+
+pristine.addValidator(checkStringLength(textDescription, MAX_LENGTH_DESCRIPTION), `Не более ${MAX_LENGTH_DESCRIPTION} символов`);
+pristine.addValidator(checkStringLength(textHashtags, MAX_LENGHT_HASHTAG), `Не более ${MAX_LENGHT_HASHTAG} символов`);
+pristine.addValidator(textHashtags, checkHashtagsSymbols, 'хэш-тег начинается с символа # (решётка), строка после решётки должна состоять из букв и чисел и не может содержать пробелы, спецсимволы (#, @, $ и т. п.), символы пунктуации (тире, дефис, запятая и т. п.), эмодзи и т. д.');
+pristine.addValidator(textHashtags, getUniqueHashtags, 'один и тот же хэш-тег не может быть использован дважды');
+pristine.addValidator(textHashtags, checkQuantity, 'нельзя указать больше пяти хэш-тегов');
+pristine.addValidator(textHashtags, getHashtagsToLowerCase, '');
+
 const blockSubmitButton = () => {
   submitButton.disabled = true;
   submitButton.textContent = 'Публикую...';
@@ -42,43 +55,22 @@ const unblockSubmitButton = () => {
   submitButton.textContent = 'Опубликовать';
 };
 
-const pristine = new Pristine(imgUploadForm, {
-  classTo: 'img-upload__field-wrapper',
-  errorTextParent: 'img-upload__field-wrapper',
-  errorTextClass: 'img-upload__error-text',
-});
-
-const isValidHashtags = () => textHashtags.value.length === 0;
-
-pristine.addValidator(checkStringLength(textDescription, MAX_LENGTH_DESCRIPTION), `Не более ${MAX_LENGTH_DESCRIPTION} символов`);
-pristine.addValidator(checkStringLength(textHashtags, MAX_LENGHT_HASHTAG), `Не более ${MAX_LENGHT_HASHTAG} символов`);
-pristine.addValidator(textHashtags, checkHashtagsSymbols, 'хэш-тег начинается с символа # (решётка), строка после решётки должна состоять из букв и чисел и не может содержать пробелы, спецсимволы (#, @, $ и т. п.), символы пунктуации (тире, дефис, запятая и т. п.), эмодзи и т. д.');
-pristine.addValidator(textHashtags, getUniqueHashtags, 'один и тот же хэш-тег не может быть использован дважды');
-pristine.addValidator(textHashtags, checkQuantity, 'нельзя указать больше пяти хэш-тегов');
-pristine.addValidator(textHashtags, getHashtagsToLowerCase, '');
-
-/* imgUploadForm.addEventListener('submit', (evt) => {
-  evt.preventDefault();
-  if (pristine.validate()) {
-    imgUploadForm.submit();
-  }
-}); */
 
 const submitForm = (onSuccess) => {
   imgUploadForm.addEventListener('submit', (evt) => {
     evt.preventDefault();
     const isValid = pristine.validate();
-    if (isValid || isValidHashtags()) {
+    if (isValid) {
       blockSubmitButton();
       sendData(
         () => {
           onSuccess();
           unblockSubmitButton();
-          closeUploadForm();
+          openSuccessMessage();
         },
         () => {
+          openErrorMessage();
           unblockSubmitButton();
-          closeUploadForm();
         },
         new FormData(evt.target),
       );
@@ -86,4 +78,5 @@ const submitForm = (onSuccess) => {
   });
 };
 
-export {pristine, submitForm};
+export {pristine, submitForm, textHashtags, textDescription};
+

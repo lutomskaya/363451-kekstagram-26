@@ -1,71 +1,79 @@
-import { isEscapeKey } from './util';
-import { bodyContainer } from './form';
-import { closeUploadForm } from './form';
+import { isEscapeKey } from './util.js';
+import { bodyContainer } from './form.js';
 
 const ALERT_SHOW_TIME = 5000;
 
-const successTemplate = document.querySelector('#success').content.querySelector('.success');
-const successElement = successTemplate.cloneNode(true);
-const successButton = successElement.querySelector('.success__button');
 const errorTemplate = document.querySelector('#error').content.querySelector('.error');
 const errorElement = errorTemplate.cloneNode(true);
 const errorButton = errorElement.querySelector('.error__button');
+const successTemplate = document.querySelector('#success').content.querySelector('.success');
+const successElement = successTemplate.cloneNode(true);
+const successButton = successElement.querySelector('.success__button');
+const uploadFormOverlayElement = document.querySelector('.img-upload__overlay');
+const photoUploadElement = document.querySelector('#upload-file');
+
+const onErrorEscKeydown = (evt) => {
+  if (isEscapeKey(evt)) {
+    closeErrorMessage();
+  }
+};
+
+const onErrorModalClick = (evt) => {
+  if (evt.target.matches('.error')) {
+    closeErrorMessage();
+  }
+};
+
+const onSuccessEscKeydown = (evt) => {
+  if (isEscapeKey(evt)) {
+    closeSuccessMessage();
+  }
+};
+
+const onSuccessModalClick = (evt) => {
+  if (evt.target.matches('.success')) {
+    closeSuccessMessage();
+  }
+};
 
 const openErrorMessage = () => {
+  errorElement.style.zIndex = '100';
   bodyContainer.append(errorElement);
-  document.addEventListener('keydown', onEscKeydown);
-  document.addEventListener('click', onErrorMessageAnyClickClose);
+  errorButton.addEventListener('click', () => {closeErrorMessage();});
+  document.addEventListener('click', onErrorModalClick);
+  document.addEventListener('keydown', onErrorEscKeydown);
 };
 
-const closeErrorMessage = () => {
-  errorElement.remove();
-  document.removeEventListener('keydown', onEscKeydown);
-  document.removeEventListener('click', onErrorMessageAnyClickClose);
-};
 
-errorButton.addEventListener('click', () => closeErrorMessage());
+function closeErrorMessage() {
+  const modal = document.querySelector('.error');
+  modal.remove();
+  photoUploadElement.value = '';
+  uploadFormOverlayElement.classList.add('hidden');
+  document.body.classList.remove('modal-open');
+  document.removeEventListener('click', onErrorModalClick);
+  document.removeEventListener('keydown', onErrorEscKeydown);
+}
 
 const openSuccessMessage = () => {
   bodyContainer.append(successElement);
-  document.addEventListener('keydown', onEscKeydown);
-  document.addEventListener('click', onErrorMessageAnyClickClose);
+  bodyContainer.classList.add('modal-open');
+  successButton.addEventListener('click', () => {closeSuccessMessage();});
+  document.addEventListener('click', onSuccessModalClick);
+  document.addEventListener('keydown', onSuccessEscKeydown);
 };
 
-const closeSuccessMessage = () => {
-  errorElement.remove();
-  document.removeEventListener('keydown', onEscKeydown);
-  document.removeEventListener('click', onErrorMessageAnyClickClose);
-};
-
-successButton.addEventListener('click', () => closeSuccessMessage());
-
-function onEscKeydown (evt) {
-  if(isEscapeKey(evt)) {
-    evt.preventDefault();
-    closeErrorMessage();
-    closeSuccessMessage();
-  }
+function closeSuccessMessage() {
+  const modal = document.querySelector('.success');
+  modal.remove();
+  document.body.classList.remove('modal-open');
+  document.removeEventListener('click', onSuccessModalClick);
+  document.removeEventListener('keydown', onSuccessEscKeydown);
 }
-
-function onErrorMessageAnyClickClose (evt) {
-  if (evt.target === errorElement || evt.target === successElement) {
-    closeErrorMessage();
-    closeSuccessMessage();
-  }
-}
-
-const uploadSuccessSubmit = () => {
-  closeUploadForm();
-  openSuccessMessage();
-};
-
-const uploadErrorSubmit = () => {
-  openErrorMessage();
-};
 
 const showAlertMessage = (message) => {
   const alertBlock = document.createElement('div');
-  alertBlock.style.zIndex = 10;
+  alertBlock.style.zIndex = 1000;
   alertBlock.style.position = 'absolute';
   alertBlock.style.left = 0;
   alertBlock.style.top = '10px';
@@ -75,6 +83,7 @@ const showAlertMessage = (message) => {
   alertBlock.style.fontWeight = '600';
   alertBlock.style.textAlign = 'center';
   alertBlock.style.backgroundColor = 'red';
+  alertBlock.style.color = 'black';
 
   alertBlock.textContent = message;
 
@@ -85,4 +94,6 @@ const showAlertMessage = (message) => {
   }, ALERT_SHOW_TIME);
 };
 
-export {showAlertMessage, uploadSuccessSubmit, uploadErrorSubmit};
+export {showAlertMessage, openErrorMessage, openSuccessMessage };
+
+
