@@ -19,7 +19,6 @@ const closeBigPicture = () => {
   bodyContainer.classList.remove('modal-open');
   removeEvent();
 };
-
 const onPictureEscKeydown = (evt) => {
   if(isEscapeKey(evt)) {
     evt.preventDefault();
@@ -27,13 +26,7 @@ const onPictureEscKeydown = (evt) => {
   }
 };
 
-const onClosedPicture = (evt) => {
-  evt.preventDefault();
-  closeBigPicture();
-};
-
 function removeEvent () {
-  closeButton.removeEventListener('click', onClosedPicture);
   document.removeEventListener('keydown', onPictureEscKeydown);
 }
 
@@ -58,7 +51,10 @@ const renderComments = (comments) => {
   commentCountElement.classList.remove('hidden');
   commentLoader.classList.remove('hidden');
 
-  const renderCommentsStep = () => {
+  commentLoader.addEventListener('click', onLoaderClick);
+  renderCommentsStep();
+
+  function renderCommentsStep () {
     const lastIndex = Math.min(currentIndex + COMMENT_COUNT, comments.length);
     for (let i = currentIndex; i < lastIndex; i++) {
       commentList.appendChild(renderComment(comments[i]));
@@ -71,10 +67,7 @@ const renderComments = (comments) => {
       commentLoader.classList.add('hidden');
       commentLoader.removeEventListener('click', onLoaderClick);
     }
-  };
-
-  commentLoader.addEventListener('click', onLoaderClick);
-  renderCommentsStep();
+  }
 
   function onLoaderClick (evt) {
     evt.preventDefault();
@@ -89,12 +82,11 @@ const openBigPicture = (photo) => {
   description.textContent = photo.description;
   commentCount.textContent = photo.comments.length;
   renderComments(photo.comments);
-
   commentList.append(fragment);
   description.textContent = photo.description;
   bigPicture.classList.remove('hidden');
   bodyContainer.classList.add('modal-open');
-  closeButton.addEventListener('click', onClosedPicture);
+  closeButton.addEventListener('click', closeBigPicture);
   document.addEventListener('keydown', onPictureEscKeydown);
 };
 
