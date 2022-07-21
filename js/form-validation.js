@@ -1,6 +1,7 @@
 import { checkStringLength } from './util.JS';
 import { openMessage } from './messages.js';
 import { sendData } from './api.js';
+import { closeUploadForm } from './form.js';
 
 const MAX_LENGHT_HASHTAG = 20;
 const MAX_HASHTAG_NUMBERS = 5;
@@ -65,6 +66,7 @@ const onSubmitForm = (evt) => {
       () => {
         unblockSubmitButton();
         openMessage('success');
+        closeUploadForm();
       },
       () => {
         unblockSubmitButton();

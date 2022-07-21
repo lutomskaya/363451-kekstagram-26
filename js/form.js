@@ -3,6 +3,7 @@ import { pristine, onSubmitForm } from './form-validation.js';
 import { setupZoom, destroyZoom } from './zoom.js';
 import { setupEffects, destroyEffects } from './effect.js';
 
+
 const uploadFile = document.querySelector('#upload-file');
 const uploadOverlay = document.querySelector('.img-upload__overlay');
 const imgEffectsFieldset = document.querySelector('.img-upload__effects');
@@ -33,7 +34,7 @@ const closeUploadForm = () => {
 };
 
 const onEscKeydown = (evt) => {
-  if(isEscapeKey(evt)) {
+  if(isEscapeKey(evt) && !'.error') {
     evt.preventDefault();
     closeUploadForm();
   }

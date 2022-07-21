@@ -10,41 +10,37 @@ const photoUploadElement = document.querySelector('#upload-file');
 
 const onEscKeydown = (evt) => {
   if (isEscapeKey(evt)) {
-    evt.preventDefault();
     closeMessage();
   }
 };
 
-const onMessageClick = (evt) => {
-  if (!evt.target.closest('div')) {
-    closeMessage();
-    window.removeEventListener('click', onMessageClick);
-  }
+const onMessageClick = () => {
+  closeMessage();
+  window.removeEventListener('click', onMessageClick);
+};
+
+const messageType = {
+  success: 'success',
+  error: 'error'
 };
 
 const openMessage = (type) => {
   let template;
-  let button;
 
   switch (type) {
-    case 'success':
+    case messageType.success:
       template = successTemplate;
-      button = '.success__button';
       break;
-    case 'error':
+    case messageType.error:
       template = errorTemplate;
-      button = '.error__button';
       break;
   }
 
   const messageElement = template.cloneNode(true);
   bodyContainer.appendChild(messageElement);
   messageElement.style.zIndex = 5;
-  const messageButton = messageElement.querySelector(button);
-  messageButton.addEventListener('click', () => {closeMessage();});
-  document.addEventListener('click', onMessageClick);
   document.addEventListener('keydown', onEscKeydown);
-  document.addEventListener('click', onMessageClick);
+  messageElement.addEventListener('click', onMessageClick);
 };
 
 function closeMessage() {
@@ -58,7 +54,6 @@ function closeMessage() {
   }
 
   photoUploadElement.value = '';
-  document.removeEventListener('click', onMessageClick);
   document.removeEventListener('keydown', onEscKeydown);
 }
 
