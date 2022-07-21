@@ -19,4 +19,12 @@ const makeElement = (tagName, className) => {
 
 const isEscapeKey = (evt) => evt.key === 'Escape';
 
-export {getRandom, getRandomArrayElement, makeElement, isEscapeKey, checkStringLength};
+const debounce = (callback, timeoutDelay = 500) => {
+  let timeoutId;
+  return (...rest) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => callback.apply(this, rest), timeoutDelay);
+  };
+};
+
+export {getRandom, getRandomArrayElement, makeElement, isEscapeKey, checkStringLength, debounce};
