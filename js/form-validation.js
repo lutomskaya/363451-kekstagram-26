@@ -19,6 +19,16 @@ const checkHashtagsSymbols = (value) => {
   return hashtags.every((element) => REGULAR_EXPRESSION.test(element));
 };
 
+const validateHashtagsLength = (value) => {
+  const hashtagsArr = value.trim().split(' ');
+  for (let i = 0; i < hashtagsArr.length; i++) {
+    if (hashtagsArr[i].length > MAX_LENGTH_HASHTAG) {
+      return false;
+    }
+  }
+  return true;
+};
+
 const getUniqueHashtags = (value) => {
   const hashtags = getHashtags(value);
   const uniqueSet = new Set(hashtags);
@@ -37,7 +47,7 @@ const pristine = new Pristine(imgUploadForm, {
 });
 
 pristine.addValidator(checkStringLength(textDescription, MAX_LENGTH_DESCRIPTION), `Не более ${MAX_LENGTH_DESCRIPTION} символов`);
-pristine.addValidator(checkStringLength(textHashtags, MAX_LENGTH_HASHTAG), `Не более ${MAX_LENGTH_HASHTAG} символов`);
+pristine.addValidator(textHashtags, validateHashtagsLength, `Не более ${MAX_LENGTH_HASHTAG} символов`);
 pristine.addValidator(textHashtags, checkHashtagsSymbols, 'хэш-тег начинается с символа # (решётка), строка после решётки должна состоять из букв и чисел и не может содержать пробелы, спецсимволы (#, @, $ и т. п.), символы пунктуации (тире, дефис, запятая и т. п.), эмодзи и т. д.');
 pristine.addValidator(textHashtags, getUniqueHashtags, 'один и тот же хэш-тег не может быть использован дважды');
 pristine.addValidator(textHashtags, checkQuantity, 'нельзя указать больше пяти хэш-тегов');
