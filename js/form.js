@@ -1,7 +1,8 @@
 import { isEscapeKey } from './util.js';
-import { pristine, onSubmitForm } from './form-validation.js';
+import { pristine } from './form-validation.js';
 import { setupZoom, destroyZoom } from './zoom.js';
 import { setupEffects, destroyEffects } from './effect.js';
+import { onSubmitForm } from './messages.js';
 
 const FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
 const uploadFile = document.querySelector('#upload-file');
@@ -24,7 +25,7 @@ uploadFile.addEventListener('change', () => {
   }
 });
 
-const stopPropagationEsc = (evt) => {
+const onStopPropagationEsc = (evt) => {
   if (isEscapeKey(evt)) {
     evt.stopPropagation();
   }
@@ -59,8 +60,8 @@ const onClosedForm = (evt) => {
 function removeEvent () {
   uploadClose.removeEventListener('click', onClosedForm);
   document.removeEventListener('keydown', onEscKeydown);
-  textHashtags.removeEventListener('keydown', stopPropagationEsc);
-  textDescription.removeEventListener('keydown', stopPropagationEsc);
+  textHashtags.removeEventListener('keydown', onStopPropagationEsc);
+  textDescription.removeEventListener('keydown', onStopPropagationEsc);
   imgUploadForm.removeEventListener('submit', onSubmitForm);
 }
 
@@ -69,8 +70,8 @@ const openUploadForm = () => {
   bodyContainer.classList.add('modal-open');
   uploadClose.addEventListener('click', onClosedForm);
   document.addEventListener('keydown', onEscKeydown);
-  textHashtags.addEventListener('keydown', stopPropagationEsc);
-  textDescription.addEventListener('keydown', stopPropagationEsc);
+  textHashtags.addEventListener('keydown', onStopPropagationEsc);
+  textDescription.addEventListener('keydown', onStopPropagationEsc);
   imgUploadForm.addEventListener('submit', onSubmitForm);
   setupZoom();
   setupEffects();
@@ -78,4 +79,4 @@ const openUploadForm = () => {
 
 uploadFile.addEventListener('change', openUploadForm);
 
-export {openUploadForm, closeUploadForm, bodyContainer};
+export {openUploadForm, closeUploadForm};

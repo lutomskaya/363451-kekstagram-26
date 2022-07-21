@@ -1,9 +1,6 @@
-import { checkStringLength } from './util.JS';
-import { openMessage } from './messages.js';
-import { sendData } from './api.js';
-import { closeUploadForm } from './form.js';
+import { checkStringLength } from './util.js';
 
-const MAX_LENGHT_HASHTAG = 20;
+const MAX_LENGTH_HASHTAG = 20;
 const MAX_HASHTAG_NUMBERS = 5;
 const MAX_LENGTH_DESCRIPTION = 140;
 const REGULAR_EXPRESSION = /^#[A-Za-zА-Яа-яЁё0-9]{1,19}$/;
@@ -11,7 +8,7 @@ const REGULAR_EXPRESSION = /^#[A-Za-zА-Яа-яЁё0-9]{1,19}$/;
 const textHashtags = document.querySelector('.text__hashtags');
 const textDescription = document.querySelector('.text__description');
 const imgUploadForm = document.querySelector('.img-upload__form');
-const submitButton = document.querySelector('#upload-submit');
+
 
 const getHashtags = (string) => string.toLowerCase().split(' ').filter((item) => item !== '');
 
@@ -40,42 +37,11 @@ const pristine = new Pristine(imgUploadForm, {
 });
 
 pristine.addValidator(checkStringLength(textDescription, MAX_LENGTH_DESCRIPTION), `Не более ${MAX_LENGTH_DESCRIPTION} символов`);
-pristine.addValidator(checkStringLength(textHashtags, MAX_LENGHT_HASHTAG), `Не более ${MAX_LENGHT_HASHTAG} символов`);
+pristine.addValidator(checkStringLength(textHashtags, MAX_LENGTH_HASHTAG), `Не более ${MAX_LENGTH_HASHTAG} символов`);
 pristine.addValidator(textHashtags, checkHashtagsSymbols, 'хэш-тег начинается с символа # (решётка), строка после решётки должна состоять из букв и чисел и не может содержать пробелы, спецсимволы (#, @, $ и т. п.), символы пунктуации (тире, дефис, запятая и т. п.), эмодзи и т. д.');
 pristine.addValidator(textHashtags, getUniqueHashtags, 'один и тот же хэш-тег не может быть использован дважды');
 pristine.addValidator(textHashtags, checkQuantity, 'нельзя указать больше пяти хэш-тегов');
 pristine.addValidator(textHashtags, getHashtagsToLowerCase, '');
 
-const blockSubmitButton = () => {
-  submitButton.disabled = true;
-  submitButton.textContent = 'Публикую...';
-};
-
-const unblockSubmitButton = () => {
-  submitButton.disabled = false;
-  submitButton.textContent = 'Опубликовать';
-};
-
-
-const onSubmitForm = (evt) => {
-  evt.preventDefault();
-  const isValid = pristine.validate();
-  if (isValid) {
-    blockSubmitButton();
-    sendData(
-      () => {
-        unblockSubmitButton();
-        openMessage('success');
-        closeUploadForm();
-      },
-      () => {
-        unblockSubmitButton();
-        openMessage('error');
-      },
-      new FormData(imgUploadForm),
-    );
-  }
-};
-
-export {pristine, onSubmitForm, textHashtags, textDescription};
+export {pristine};
 
