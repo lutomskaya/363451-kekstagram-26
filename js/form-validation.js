@@ -1,4 +1,7 @@
 import { checkStringLength } from './util.JS';
+import { openMessage } from './messages.js';
+import { sendData } from './api.js';
+import { closeUploadForm } from './form.js';
 
 const MAX_LENGHT_HASHTAG = 20;
 const MAX_HASHTAG_NUMBERS = 5;
@@ -8,6 +11,7 @@ const REGULAR_EXPRESSION = /^#[A-Za-zА-Яа-яЁё0-9]{1,19}$/;
 const textHashtags = document.querySelector('.text__hashtags');
 const textDescription = document.querySelector('.text__description');
 const imgUploadForm = document.querySelector('.img-upload__form');
+const submitButton = document.querySelector('#upload-submit');
 
 const getHashtags = (string) => string.toLowerCase().split(' ').filter((item) => item !== '');
 
@@ -42,11 +46,36 @@ pristine.addValidator(textHashtags, getUniqueHashtags, 'один и тот же 
 pristine.addValidator(textHashtags, checkQuantity, 'нельзя указать больше пяти хэш-тегов');
 pristine.addValidator(textHashtags, getHashtagsToLowerCase, '');
 
-imgUploadForm.addEventListener('submit', (evt) => {
-  evt.preventDefault();
-  if (pristine.validate()) {
-    imgUploadForm.submit();
-  }
-});
+const blockSubmitButton = () => {
+  submitButton.disabled = true;
+  submitButton.textContent = 'Публикую...';
+};
 
-export {pristine};
+const unblockSubmitButton = () => {
+  submitButton.disabled = false;
+  submitButton.textContent = 'Опубликовать';
+};
+
+
+const onSubmitForm = (evt) => {
+  evt.preventDefault();
+  const isValid = pristine.validate();
+  if (isValid) {
+    blockSubmitButton();
+    sendData(
+      () => {
+        unblockSubmitButton();
+        openMessage('success');
+        closeUploadForm();
+      },
+      () => {
+        unblockSubmitButton();
+        openMessage('error');
+      },
+      new FormData(imgUploadForm),
+    );
+  }
+};
+
+export {pristine, onSubmitForm, textHashtags, textDescription};
+

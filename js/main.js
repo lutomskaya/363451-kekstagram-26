@@ -1,14 +1,9 @@
-import './util.js';
-import {imageDescription} from './data.js';
-import './picture.js';
-import './big-picture.js';
-import { openUploadForm } from './form.js';
-import './form-validation.js';
-import './zoom.js';
-import './effect.js';
+import './form.js';
+/* import { onSubmitForm } from './form-validation.js';
+import { closeUploadForm } from './form.js'; */
+import { getData } from './api.js';
+import { renderPhotos } from './picture.js';
 
-
-// eslint-disable-next-line no-console
-console.log(imageDescription);
-
-openUploadForm();
+getData((photos) => {
+  renderPhotos(photos);
+});

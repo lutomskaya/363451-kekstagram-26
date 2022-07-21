@@ -1,17 +1,18 @@
 import { isEscapeKey } from './util.js';
-import { pristine } from './form-validation.js';
+import { pristine, onSubmitForm } from './form-validation.js';
 import { setupZoom, destroyZoom } from './zoom.js';
 import { setupEffects, destroyEffects } from './effect.js';
 
+
 const uploadFile = document.querySelector('#upload-file');
 const uploadOverlay = document.querySelector('.img-upload__overlay');
-const imgEffectsFieldset = document.querySelector('.img-upload__effects');
 const bodyContainer = document.querySelector('body');
 const uploadClose = document.querySelector('.img-upload__cancel');
 const imgUploadForm = document.querySelector('.img-upload__form');
 const imgUploadPreview = document.querySelector('.img-upload__preview img');
 const textHashtags = document.querySelector('.text__hashtags');
 const textDescription = document.querySelector('.text__description');
+
 
 const stopPropagationEsc = (evt) => {
   if (isEscapeKey(evt)) {
@@ -33,7 +34,8 @@ const closeUploadForm = () => {
 };
 
 const onEscKeydown = (evt) => {
-  if(isEscapeKey(evt)) {
+  const modalError = bodyContainer.querySelector('.error');
+  if(isEscapeKey(evt) && !modalError) {
     evt.preventDefault();
     closeUploadForm();
   }
@@ -49,19 +51,21 @@ function removeEvent () {
   document.removeEventListener('keydown', onEscKeydown);
   textHashtags.removeEventListener('keydown', stopPropagationEsc);
   textDescription.removeEventListener('keydown', stopPropagationEsc);
+  imgUploadForm.removeEventListener('submit', onSubmitForm);
 }
 
 const openUploadForm = () => {
-  uploadFile.addEventListener('change', () => {
-    uploadOverlay.classList.remove('hidden');
-    bodyContainer.classList.add('modal-open');
-    uploadClose.addEventListener('click', onClosedForm);
-    document.addEventListener('keydown', onEscKeydown);
-    textHashtags.addEventListener('keydown', stopPropagationEsc);
-    textDescription.addEventListener('keydown', stopPropagationEsc);
-    setupZoom();
-    setupEffects();
-  });
+  uploadOverlay.classList.remove('hidden');
+  bodyContainer.classList.add('modal-open');
+  uploadClose.addEventListener('click', onClosedForm);
+  document.addEventListener('keydown', onEscKeydown);
+  textHashtags.addEventListener('keydown', stopPropagationEsc);
+  textDescription.addEventListener('keydown', stopPropagationEsc);
+  imgUploadForm.addEventListener('submit', onSubmitForm);
+  setupZoom();
+  setupEffects();
 };
 
-export {openUploadForm, closeUploadForm, imgEffectsFieldset};
+uploadFile.addEventListener('change', openUploadForm);
+
+export {openUploadForm, closeUploadForm, bodyContainer};
