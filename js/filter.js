@@ -1,10 +1,11 @@
 import { renderPhotos } from './picture.js';
-import { debounce } from './util.js';
+/* import { debounce } from './util.js'; */
 
 const NEW_PICTURES = 10;
+let photo;
 
 const pictureList = document.querySelector('.pictures');
-const filtersElement = document.querySelector('.img-filters');
+const imgFiltersForm = document.querySelector('.img-filters__form');
 const defaultButton = document.querySelector('#filter-default');
 const randomButton = document.querySelector('#filter-random');
 const discussedButton = document.querySelector('#filter-discussed');
@@ -39,25 +40,29 @@ const getDiscussrdFilter = (pictures) => {
   return copyPictures.sort(compareComments);
 };
 
-const renderFilter = (pictures) => {
+const renderFilter = (evt) => {
+  evt.preventDefault();
   clearPictures();
-  renderPhotos(pictures);
+
+  if (evt.target === defaultButton) {
+    renderPhotos(getDefaultFilter(photo));
+  }
+
+  if (evt.target === randomButton) {
+    renderPhotos(getRandomFilter(photo));
+  }
+
+  if (evt.target === discussedButton) {
+    renderPhotos(getDiscussrdFilter(photo));
+  }
+  removeActiveClass(evt.target);
 };
 
+/* onFilterDebounce = debounce(renderFilter, 500); */
+
 const showFilters = (pictures) => {
-  filtersElement.classList.remove('img-filters--inactive');
-  defaultButton.addEventListener('click', debounce((evt) => {
-    removeActiveClass(evt.target);
-    renderFilter(getDefaultFilter(pictures));
-  }));
-  randomButton.addEventListener('click', debounce((evt) => {
-    removeActiveClass(evt.target);
-    renderFilter(getRandomFilter(pictures));
-  }));
-  discussedButton.addEventListener('click', debounce((evt) => {
-    removeActiveClass(evt.target);
-    renderFilter(getDiscussrdFilter(pictures));
-  }));
+  photo = pictures;
+  imgFiltersForm.addEventListener('click', renderFilter);
 };
 
 export {showFilters};
