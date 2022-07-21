@@ -3,7 +3,7 @@ import { pristine, onSubmitForm } from './form-validation.js';
 import { setupZoom, destroyZoom } from './zoom.js';
 import { setupEffects, destroyEffects } from './effect.js';
 
-
+const FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
 const uploadFile = document.querySelector('#upload-file');
 const uploadOverlay = document.querySelector('.img-upload__overlay');
 const bodyContainer = document.querySelector('body');
@@ -13,6 +13,16 @@ const imgUploadPreview = document.querySelector('.img-upload__preview img');
 const textHashtags = document.querySelector('.text__hashtags');
 const textDescription = document.querySelector('.text__description');
 
+uploadFile.addEventListener('change', () => {
+  const file = uploadFile.files[0];
+  const fileName = file.name.toLowerCase();
+
+  const matches = FILE_TYPES.some((it) => fileName.endsWith(it));
+
+  if (matches) {
+    imgUploadPreview.src = URL.createObjectURL(file);
+  }
+});
 
 const stopPropagationEsc = (evt) => {
   if (isEscapeKey(evt)) {
