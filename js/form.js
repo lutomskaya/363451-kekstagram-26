@@ -6,14 +6,13 @@ import { setupEffects, destroyEffects } from './effect.js';
 
 const uploadFile = document.querySelector('#upload-file');
 const uploadOverlay = document.querySelector('.img-upload__overlay');
-const imgEffectsFieldset = document.querySelector('.img-upload__effects');
 const bodyContainer = document.querySelector('body');
 const uploadClose = document.querySelector('.img-upload__cancel');
 const imgUploadForm = document.querySelector('.img-upload__form');
 const imgUploadPreview = document.querySelector('.img-upload__preview img');
 const textHashtags = document.querySelector('.text__hashtags');
 const textDescription = document.querySelector('.text__description');
-const modalError = bodyContainer.querySelector('.error');
+
 
 const stopPropagationEsc = (evt) => {
   if (isEscapeKey(evt)) {
@@ -35,6 +34,7 @@ const closeUploadForm = () => {
 };
 
 const onEscKeydown = (evt) => {
+  const modalError = bodyContainer.querySelector('.error');
   if(isEscapeKey(evt) && !modalError) {
     evt.preventDefault();
     closeUploadForm();
@@ -68,4 +68,4 @@ const openUploadForm = () => {
 
 uploadFile.addEventListener('change', openUploadForm);
 
-export {openUploadForm, closeUploadForm, imgEffectsFieldset, bodyContainer};
+export {openUploadForm, closeUploadForm, bodyContainer};
