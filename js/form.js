@@ -13,6 +13,7 @@ const imgUploadForm = document.querySelector('.img-upload__form');
 const imgUploadPreview = document.querySelector('.img-upload__preview img');
 const textHashtags = document.querySelector('.text__hashtags');
 const textDescription = document.querySelector('.text__description');
+const modalError = bodyContainer.querySelector('.error');
 
 const stopPropagationEsc = (evt) => {
   if (isEscapeKey(evt)) {
@@ -34,7 +35,7 @@ const closeUploadForm = () => {
 };
 
 const onEscKeydown = (evt) => {
-  if(isEscapeKey(evt) && !'.error') {
+  if(isEscapeKey(evt) && !modalError) {
     evt.preventDefault();
     closeUploadForm();
   }
