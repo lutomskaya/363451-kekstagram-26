@@ -1,5 +1,5 @@
 import { renderPhotos } from './picture.js';
-/* import { debounce } from './util.js'; */
+import { debounce } from './util.js';
 
 const NEW_PICTURES = 10;
 let photo;
@@ -40,29 +40,32 @@ const getDiscussrdFilter = (pictures) => {
   return copyPictures.sort(compareComments);
 };
 
-const renderFilter = (evt) => {
-  evt.preventDefault();
+const renderFilter = debounce ((filterButton) => {
   clearPictures();
 
-  if (evt.target === defaultButton) {
+  if (filterButton === defaultButton) {
     renderPhotos(getDefaultFilter(photo));
   }
 
-  if (evt.target === randomButton) {
+  if (filterButton === randomButton) {
     renderPhotos(getRandomFilter(photo));
   }
 
-  if (evt.target === discussedButton) {
+  if (filterButton === discussedButton) {
     renderPhotos(getDiscussrdFilter(photo));
   }
-  removeActiveClass(evt.target);
-};
+}, 500);
 
-/* onFilterDebounce = debounce(renderFilter, 500); */
+
+const onFilterChanged = (evt) => {
+  evt.preventDefault();
+  removeActiveClass(evt.target);
+  renderFilter(evt.target);
+};
 
 const showFilters = (pictures) => {
   photo = pictures;
-  imgFiltersForm.addEventListener('click', renderFilter);
+  imgFiltersForm.addEventListener('click', onFilterChanged);
 };
 
 export {showFilters};
