@@ -2,6 +2,7 @@ import { renderPhotos } from './picture.js';
 import { debounce } from './util.js';
 
 const NEW_PICTURES = 10;
+const RERENDER_DELAY = 500;
 let photo;
 
 const pictureList = document.querySelector('.pictures');
@@ -35,7 +36,7 @@ const getRandomFilter = (pictures) => {
   return copyPictures.sort(() => 0.5 - Math.random()).slice(0, NEW_PICTURES);
 };
 
-const getDiscussrdFilter = (pictures) => {
+const getDiscussedFilter = (pictures) => {
   const copyPictures = pictures.slice();
   return copyPictures.sort(compareComments);
 };
@@ -52,9 +53,9 @@ const renderFilter = debounce ((filterButton) => {
   }
 
   if (filterButton === discussedButton) {
-    renderPhotos(getDiscussrdFilter(photo));
+    renderPhotos(getDiscussedFilter(photo));
   }
-}, 500);
+}, RERENDER_DELAY);
 
 
 const onFilterChanged = (evt) => {
