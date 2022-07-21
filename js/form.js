@@ -1,9 +1,10 @@
 import { isEscapeKey } from './util.js';
-import { pristine, onSubmitForm } from './form-validation.js';
+import { pristine } from './form-validation.js';
 import { setupZoom, destroyZoom } from './zoom.js';
 import { setupEffects, destroyEffects } from './effect.js';
+import { onSubmitForm } from './messages.js';
 
-
+const FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
 const uploadFile = document.querySelector('#upload-file');
 const uploadOverlay = document.querySelector('.img-upload__overlay');
 const bodyContainer = document.querySelector('body');
@@ -13,8 +14,18 @@ const imgUploadPreview = document.querySelector('.img-upload__preview img');
 const textHashtags = document.querySelector('.text__hashtags');
 const textDescription = document.querySelector('.text__description');
 
+uploadFile.addEventListener('change', () => {
+  const file = uploadFile.files[0];
+  const fileName = file.name.toLowerCase();
 
-const stopPropagationEsc = (evt) => {
+  const matches = FILE_TYPES.some((it) => fileName.endsWith(it));
+
+  if (matches) {
+    imgUploadPreview.src = URL.createObjectURL(file);
+  }
+});
+
+const onStopPropagationEsc = (evt) => {
   if (isEscapeKey(evt)) {
     evt.stopPropagation();
   }
@@ -49,8 +60,8 @@ const onClosedForm = (evt) => {
 function removeEvent () {
   uploadClose.removeEventListener('click', onClosedForm);
   document.removeEventListener('keydown', onEscKeydown);
-  textHashtags.removeEventListener('keydown', stopPropagationEsc);
-  textDescription.removeEventListener('keydown', stopPropagationEsc);
+  textHashtags.removeEventListener('keydown', onStopPropagationEsc);
+  textDescription.removeEventListener('keydown', onStopPropagationEsc);
   imgUploadForm.removeEventListener('submit', onSubmitForm);
 }
 
@@ -59,8 +70,8 @@ const openUploadForm = () => {
   bodyContainer.classList.add('modal-open');
   uploadClose.addEventListener('click', onClosedForm);
   document.addEventListener('keydown', onEscKeydown);
-  textHashtags.addEventListener('keydown', stopPropagationEsc);
-  textDescription.addEventListener('keydown', stopPropagationEsc);
+  textHashtags.addEventListener('keydown', onStopPropagationEsc);
+  textDescription.addEventListener('keydown', onStopPropagationEsc);
   imgUploadForm.addEventListener('submit', onSubmitForm);
   setupZoom();
   setupEffects();
@@ -68,4 +79,4 @@ const openUploadForm = () => {
 
 uploadFile.addEventListener('change', openUploadForm);
 
-export {openUploadForm, closeUploadForm, bodyContainer};
+export {openUploadForm, closeUploadForm};

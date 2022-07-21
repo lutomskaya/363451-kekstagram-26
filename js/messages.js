@@ -1,12 +1,21 @@
 import { isEscapeKey } from './util.js';
-import { bodyContainer } from './form.js';
+import { sendData } from './api.js';
+import { closeUploadForm } from './form.js';
+import { pristine } from './form-validation.js';
 
 const ALERT_SHOW_TIME = 5000;
+const MESSAGE_TYPE = {
+  success: 'success',
+  error: 'error'
+};
 
+const bodyContainer = document.querySelector('body');
 const successTemplate = document.querySelector('#success').content.querySelector('.success');
 const errorTemplate = document.querySelector('#error').content.querySelector('.error');
 const uploadFormOverlayElement = document.querySelector('.img-upload__overlay');
 const photoUploadElement = document.querySelector('#upload-file');
+const submitButton = document.querySelector('#upload-submit');
+const imgUploadForm = document.querySelector('.img-upload__form');
 
 const onEscKeydown = (evt) => {
   if (isEscapeKey(evt)) {
@@ -19,19 +28,14 @@ const onMessageClick = () => {
   window.removeEventListener('click', onMessageClick);
 };
 
-const messageType = {
-  success: 'success',
-  error: 'error'
-};
-
 const openMessage = (type) => {
   let template;
 
   switch (type) {
-    case messageType.success:
+    case MESSAGE_TYPE.success:
       template = successTemplate;
       break;
-    case messageType.error:
+    case MESSAGE_TYPE.error:
       template = errorTemplate;
       break;
   }
@@ -80,6 +84,36 @@ const showAlertMessage = (message) => {
   }, ALERT_SHOW_TIME);
 };
 
-export {showAlertMessage, openMessage };
+const blockSubmitButton = () => {
+  submitButton.disabled = true;
+  submitButton.textContent = 'Публикую...';
+};
+
+const unblockSubmitButton = () => {
+  submitButton.disabled = false;
+  submitButton.textContent = 'Опубликовать';
+};
+
+const onSubmitForm = (evt) => {
+  evt.preventDefault();
+  const isValid = pristine.validate();
+  if (isValid) {
+    blockSubmitButton();
+    sendData(
+      () => {
+        unblockSubmitButton();
+        openMessage(MESSAGE_TYPE.success);
+        closeUploadForm();
+      },
+      () => {
+        unblockSubmitButton();
+        openMessage(MESSAGE_TYPE.error);
+      },
+      new FormData(imgUploadForm),
+    );
+  }
+};
+
+export {showAlertMessage, openMessage, onSubmitForm };
 
 

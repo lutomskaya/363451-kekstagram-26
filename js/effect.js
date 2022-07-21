@@ -64,7 +64,7 @@ const updateSlider = (effectName) => {
   slider.noUiSlider.updateOptions(effectName.options);
 };
 
-const changeEffects = (evt) => {
+const onChangeEffects = (evt) => {
   const effect = evt.target.value;
 
   imgUploadPreview.className = '';
@@ -113,11 +113,11 @@ const setupEffects = () => {
   });
 
   uiSlider.on('update', getEffectStyle);
-  imgEffectsFieldset.addEventListener('change', changeEffects);
+  imgEffectsFieldset.addEventListener('change', onChangeEffects);
 };
 
 const destroyEffects = () => {
-  imgEffectsFieldset.removeEventListener('change', changeEffects);
+  imgEffectsFieldset.removeEventListener('change', onChangeEffects);
   slider.noUiSlider.destroy();
 };
 

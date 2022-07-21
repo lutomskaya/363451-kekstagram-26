@@ -8,7 +8,7 @@ const scaleDownButton = document.querySelector('.scale__control--smaller');
 const scaleInput = document.querySelector('.scale__control--value');
 const imgUploadPreview = document.querySelector('.img-upload__preview img');
 
-const reduceZoom = () => {
+const onReduceZoom = () => {
   let scale = parseInt(scaleInput.value, 10);
   if (scale > SIZE_MIN) {
     scale -= SIZE_STEP;
@@ -17,7 +17,7 @@ const reduceZoom = () => {
   }
 };
 
-const increaseZoom = () => {
+const onIncreaseZoom = () => {
   let scale = parseInt(scaleInput.value, 10);
   if (scale < SIZE_MAX) {
     scale += SIZE_STEP;
@@ -28,14 +28,14 @@ const increaseZoom = () => {
 
 const setupZoom = () => {
   scaleInput.value = `${DEFAULT_FILTER_VALUE}%`;
-  scaleDownButton.addEventListener('click', reduceZoom);
-  scaleUpButton.addEventListener('click', increaseZoom);
+  scaleDownButton.addEventListener('click', onReduceZoom);
+  scaleUpButton.addEventListener('click', onIncreaseZoom);
 };
 
 const destroyZoom = () => {
   scaleInput.value = `${DEFAULT_FILTER_VALUE}%`;
-  scaleDownButton.removeEventListener('click', reduceZoom);
-  scaleUpButton.removeEventListener('click', increaseZoom);
+  scaleDownButton.removeEventListener('click', onReduceZoom);
+  scaleUpButton.removeEventListener('click', onIncreaseZoom);
 };
 
 export { setupZoom, destroyZoom };
